@@ -1,0 +1,9 @@
+[Unit]
+Description=fanctrl
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh /etc/init.d/fanctrl.sh
+
+[Install]
+WantedBy=multi-user.target
