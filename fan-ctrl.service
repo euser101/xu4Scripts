@@ -3,7 +3,7 @@ Description=fanctrl
 
 [Service]
 Type=oneshot
-ExecStart=/bin/sh /etc/init.d/fanctrl.sh
+ExecStart=/bin/sh /etc/init.d/fan-ctrl.sh
 
 [Install]
 WantedBy=multi-user.target
