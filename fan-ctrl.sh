@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #PWM-Fan speeds at trip temps
-PWM_VALS="60 80 90 100" # Values have to increase
+PWM_VALS="70 80 100 160" # Values have to increase
 
 PWM_CONFIG="/sys/devices/platform/pwm-fan/hwmon/hwmon0/fan_speed"
 CUR_SPEED="/sys/devices/platform/pwm-fan/hwmon/hwmon0/pwm1"
