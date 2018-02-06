@@ -4,12 +4,13 @@ THREADS=$(nproc)
 SEPARATE="\n%s\n%s\n"
 
 checkDependencies() {
-    if hash sysbench 2>/dev/null; then
-	printf $SEPARATE ""
-    else
-        printf $SEPARATE "Installing Dependencies..."
-        sudo apt-get -y install sysbench
-    fi
+	if hash sysbench 2>/dev/null; then
+	  printf $SEPARATE ""
+	else
+	  printf $SEPARATE "Installing Dependencies..."
+	  sudo apt-get -y install sysbench
+	fi
+	
 	runBenchmark
 }
 
@@ -31,4 +32,10 @@ printResults() {
 	cat $FILENAME
 }
 
-checkDependencies
+if [[ $EUID -ne 0 ]]; then
+  echo "You must be a root user" 2>&1
+  exit 1
+else
+  checkDependencies
+fi
+
