@@ -5,7 +5,7 @@ checkVersion() {
 	   mkdir /boot/$OUTDATED_KERNEL
 	   cp /media/boot/* /boot/$OUTDATED_KERNEL/
 	fi
-	cd /opt
+	cd ~
 	if [ ! -d linux ] ; then
 	   apt install -y build-essential git
 	   apt-mark hold bootini linux-image*
