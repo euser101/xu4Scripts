@@ -8,11 +8,12 @@ checkVersion() {
 	fi
 	cd ~
 	if [ ! -d linux ] ; then
-	   apt install -y build-essential git
+	   apt install -y git build-essential
 	   apt-mark hold bootini linux-image*
 	   git clone --depth 1 --branch $GIT_BRANCH https://github.com/euser101/linux/tree/$GIT_BRANCH
 	else
 	   git pull origin $GIT_BRANCH
+	   git clean -f
 	   make clean
 	fi
 
