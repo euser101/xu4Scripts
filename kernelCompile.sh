@@ -1,4 +1,5 @@
 OUTDATED_KERNEL=$(uname -r)
+GIT_BRANCH="minimal-testing"
 
 checkVersion() {
 	if [ ! -d /boot/$OUTDATED_KERNEL ] ; then
@@ -9,9 +10,9 @@ checkVersion() {
 	if [ ! -d linux ] ; then
 	   apt install -y build-essential git
 	   apt-mark hold bootini linux-image*
-	   git clone --depth 1 --branch odroidxu4-4.14.y https://github.com/euser101/linux/tree/odroidxu4-4.14.y
+	   git clone --depth 1 --branch $GIT_BRANCH https://github.com/euser101/linux/tree/$GIT_BRANCH
 	else
-	   git pull
+	   git pull origin $GIT_BRANCH
 	   make clean
 	fi
 
