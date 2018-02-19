@@ -10,7 +10,12 @@ checkVersion() {
 	if [ ! -d linux ] ; then
 	   apt install -y git build-essential
 	   apt-mark hold bootini linux-image*
-	   git clone --depth 1 --branch $GIT_BRANCH https://github.com/euser101/linux/tree/$GIT_BRANCH
+	   if [ -z "$1" ]
+	   then
+	    git clone --depth 1 -b $GIT_BRANCH https://github.com/euser101/linux/tree/$GIT_BRANCH
+	   else
+	    git clone --depth 1 $1
+	   fi
 	else
 	   git pull origin $GIT_BRANCH
 	   git clean -f
@@ -23,13 +28,14 @@ checkVersion() {
 compile() {
 	cd ~/linux
 	make odroidxu4_defconfig
-	make -j8
+	make -j$(nproc)
 
 	installModules
 }
 
 installModules() {
 	if [ make modules_install -eq 0 ]; then
+	  make INSTALL_MOD_STRIP=1 modules_install
 	  updateImages
 	else
 	  echo "Could not compile" >&2
@@ -37,6 +43,7 @@ installModules() {
 }
 
 updateImages() {
+	cd ~/linux
 	cp arch/arm/boot/zImage arch/arm/boot/dts/exynos5422-odroidxu4.dtb /media/boot/
 	NEW=$(make kernelrelease)
 	cp arch/arm/boot/zImage /boot/zImage-$NEW
