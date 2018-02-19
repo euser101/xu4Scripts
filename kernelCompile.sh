@@ -19,7 +19,6 @@ checkVersion() {
 	else
 	   git pull origin $GIT_BRANCH
 	   git clean -f
-	   make clean
 	fi
 
 	compile
@@ -27,6 +26,7 @@ checkVersion() {
 
 compile() {
 	cd ~/linux
+	make clean
 	make odroidxu4_defconfig
 	make -j$(nproc)
 
@@ -65,4 +65,9 @@ cleanup() {
 	sync
 }
 
-checkVersion
+if [[ $EUID -ne 0 ]]; then
+  echo "You must be a root user" 2>&1
+  exit 1
+else
+  checkVersion
+fi
