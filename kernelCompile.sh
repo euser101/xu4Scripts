@@ -1,5 +1,5 @@
 OUTDATED_KERNEL=$(uname -r)
-GIT_BRANCH="minimal-testing"
+GIT_BRANCH="stable"
 
 checkVersion() {
 	if [ ! -d /boot/$OUTDATED_KERNEL ] ; then
@@ -34,12 +34,12 @@ compile() {
 }
 
 installModules() {
-	if [ make modules_install -eq 0 ]; then
+	if [ make modules_install -eq 0 ] ; then
 	  make INSTALL_MOD_STRIP=1 modules_install
 	  updateImages
 	else
-	  echo "Could not compile" >&2
-	fi	
+	  echo "Could not compile modules" >&2
+	fi
 }
 
 updateImages() {
@@ -63,10 +63,11 @@ cleanup() {
 	sync
 	sync
 	sync
+	echo "Fresh Kernel compiled and installed"
 }
 
-if [[ $EUID -ne 0 ]]; then
-  echo "You must be a root user" 2>&1
+if [[ $EUID -ne 0 ]] ; then
+  echo "You must be root" 2>&1
   exit 1
 else
   checkVersion
