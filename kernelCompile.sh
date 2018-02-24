@@ -1,12 +1,15 @@
 #!/bin/bash
 
 OUTDATED_KERNEL=$(uname -r)
+GIT_SOURCE="https://github.com/euser101/linux/tree/"
 GIT_BRANCH="stable"
 
 checkVersion() {
 	if [ ! -d /boot/$OUTDATED_KERNEL ] ; then
-	   mkdir /boot/$OUTDATED_KERNEL
+	   echo "Backing up old kernel and ini files"
+	   mkdir /boot/$OUTDATED_KERNEL /boot/$OUTDATED_KERNEL/rootfsBoot
 	   cp /media/boot/* /boot/$OUTDATED_KERNEL/
+	   cp /boot/* /boot/$OUTDATED_KERNEL/rootfsBoot
 	fi
 	cd ~
 	if [ ! -d linux ] ; then
@@ -14,7 +17,7 @@ checkVersion() {
 	   apt-mark hold bootini linux-image*
 	   if [ -z "$1" ]
 	   then
-	    git clone --depth 1 -b $GIT_BRANCH https://github.com/euser101/linux/tree/$GIT_BRANCH
+	    git clone --depth 1 -b $GIT_BRANCH $GIT_SOURCE
 	   else
 	    git clone --depth 1 $1
 	   fi
@@ -23,6 +26,18 @@ checkVersion() {
 	   git clean -f
 	fi
 
+	getConfig
+}
+
+getConfig() {
+	if [ -z "$1" ] ; then
+	    echo "Copying xu4Scripts config"
+	    cp -f ~/xu4Scripts/kernel.config ~/linux/.config
+	elif
+	    echo "Copying user defined config"
+	    cp -f $1 ~/linux/.config
+	fi
+	
 	compile
 }
 
