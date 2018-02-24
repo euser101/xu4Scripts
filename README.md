@@ -1,7 +1,5 @@
 # xu4Scripts
-Scripts to Test and Automate an Embedded Device<br>
-
-<strong>TODO:</strong><br>
--Temp and Frequency Monitor-Script<br>
--Long CPU test to check temps and log throttling<br>
--Pull custom odroidxu4_defconfig straight from repo
+- benchmarkLogger<br>
+Executes different Benchmarks to <strong>test the system and log</strong> the result <strong>into a file.</strong><br><br>
+- kernelCompile<br>
+<strong>Automatically compile</strong>, install and copy over a new <strong>Kernel</strong>.<br> 
