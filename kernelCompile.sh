@@ -1,3 +1,5 @@
+#!/bin/bash
+
 OUTDATED_KERNEL=$(uname -r)
 GIT_BRANCH="stable"
 
@@ -61,9 +63,17 @@ updateInitrd() {
 
 cleanup() {
 	sync
-	sync
-	sync
 	echo "Fresh Kernel compiled and installed"
+	
+	promptReboot
+}
+
+promptReboot() {
+	read -p "Would you like to reboot into the new Kernel? " -n 1 -r
+	if [[ $REPLY =~ ^[Yy]$ ]]
+	then
+	    reboot
+	fi
 }
 
 if [[ $EUID -ne 0 ]] ; then
