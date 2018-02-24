@@ -15,7 +15,7 @@ checkDependencies() {
 }
 
 runBenchmark() {
-	#Testing CPU, RAM and Disk
+	#Testing CPU, RAM, Disk
 	printf $SEPARATE "Starting Benchmarks..."
 	TIME=$(date -d "today" +"%Y%m%d%H%M")
 	FILENAME=results-$TIME.log
