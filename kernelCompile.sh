@@ -35,7 +35,7 @@ checkVersion() {
 getConfig() {
 	if [ -z "$2" ] ; then
 	    echo "Copying xu4Scripts config"
-	    cp -f ~/xu4Scripts/kernel.config ~/linux/.config
+	    cp -f ~/xu4Scripts/files/kernel.config ~/linux/.config
 	else
 	    echo "Copying user defined config"
 	    cp -f $2 ~/linux/.config
