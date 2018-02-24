@@ -1,15 +1,18 @@
 #!/bin/bash
 
+#parameters: repo link; .config file
+
 OUTDATED_KERNEL=$(uname -r)
-GIT_SOURCE="https://github.com/euser101/linux/tree/"
-GIT_BRANCH="stable"
+GIT_SOURCE="https://github.com/euser101/linux/"
+# GIT_BRANCH="stable"
+GIT_BRANCH="odroidxu4-4.14.y"
 
 checkVersion() {
 	if [ ! -d /boot/$OUTDATED_KERNEL ] ; then
 	   echo "Backing up old kernel and ini files"
-	   mkdir /boot/$OUTDATED_KERNEL /boot/$OUTDATED_KERNEL/rootfsBoot
-	   cp /media/boot/* /boot/$OUTDATED_KERNEL/
-	   cp /boot/* /boot/$OUTDATED_KERNEL/rootfsBoot
+	   mkdir /boot/$OUTDATED_KERNEL /boot/$OUTDATED_KERNEL/rootfsBoot/
+	   cp -f /media/boot/* /boot/$OUTDATED_KERNEL/
+	   cp -f /boot/* /boot/$OUTDATED_KERNEL/rootfsBoot/
 	fi
 	cd ~
 	if [ ! -d linux ] ; then
@@ -30,29 +33,30 @@ checkVersion() {
 }
 
 getConfig() {
-	if [ -z "$1" ] ; then
+	if [ -z "$2" ] ; then
 	    echo "Copying xu4Scripts config"
 	    cp -f ~/xu4Scripts/kernel.config ~/linux/.config
-	elif
+	else
 	    echo "Copying user defined config"
-	    cp -f $1 ~/linux/.config
+	    cp -f $2 ~/linux/.config
 	fi
 	
 	compile
 }
 
 compile() {
+	echo "Starting compilation"
 	cd ~/linux
 	make clean
-	make odroidxu4_defconfig
 	make -j$(nproc)
 
 	installModules
 }
 
 installModules() {
-	if [ make modules_install -eq 0 ] ; then
-	  make INSTALL_MOD_STRIP=1 modules_install
+	make INSTALL_MOD_STRIP=1 modules_install
+	if [ $? -eq 0 ]
+	then
 	  updateImages
 	else
 	  echo "Could not compile modules" >&2
@@ -95,5 +99,5 @@ if [[ $EUID -ne 0 ]] ; then
   echo "You must be root" 2>&1
   exit 1
 else
-  checkVersion
+  installModules
 fi

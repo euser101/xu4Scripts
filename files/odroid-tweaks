@@ -1,0 +1,17 @@
+#!/bin/bash
+USB3_IRQ=`cat /proc/interrupts | grep "xhci-hcd:usb3" | awk -F : '{print $1}'`
+USB5_IRQ=`cat /proc/interrupts | grep "xhci-hcd:usb5" | awk -F : '{print $1}'`
+echo 5 > /proc/irq/${USB3_IRQ}/smp_affinity_list
+echo 6 > /proc/irq/${USB5_IRQ}/smp_affinity_list
+
+echo "80 90 95 120" > /sys/devices/platform/pwm-fan/hwmon/hwmon0/fan_speed
+echo "80" > /sys/devices/platform/pwm-fan/hwmon/hwmon0/pwm1
+
+if [ -f /sys/class/net/eth0/queues/rx-0/rps_cpus ]; then
+	echo f > /sys/class/net/eth0/queues/rx-0/rps_cpus
+fi
+
+mv /usr/local/lib/chromium-browser/libEGL.so /usr/local/lib/chromium-browser/libEGL.so.org
+mv /usr/local/lib/chromium-browser/libGLESv2.so /usr/local/lib/chromium-browser/libGLESv2.so.org
+ln -s /usr/lib/arm-linux-gnueabihf/egl-r17p0-x11/libmali.so /usr/local/lib/chromium-browser/libEGL.so
+ln -s /usr/lib/arm-linux-gnueabihf/egl-r17p0-x11/libmali.so /usr/local/lib/chromium-browser/libGLESv2.so
