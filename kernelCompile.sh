@@ -63,7 +63,13 @@ compile() {
 	fi
 	echo "Compiling"
 	make -j$(nproc)
-	installModules
+	
+	if [ $? -eq 0 ]
+	then
+	  installModules
+	else
+	  echo "Compilation failed"
+	fi
 }
 
 installModules() {
