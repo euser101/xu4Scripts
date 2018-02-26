@@ -5,30 +5,34 @@
 OUTDATED_KERNEL=$(uname -r)
 GIT_SOURCE="${1:-https://github.com/euser101/linux/}"
 GIT_BRANCH="${2:-odroidxu4-4.14.y}"
-KERNEL_CONFIG="${3:-~/xu4Scripts/files/kernel.config}"
+KERNEL_CONFIG=${3:-~/xu4Scripts/files/kernel.config}
+CONFIGURE_CONFIG=false
 
 checkVersion() {
 	if [ ! -d /boot/$OUTDATED_KERNEL ] ; then
 	   echo "Backing up old kernel and ini files into /boot$OUTDATED_KERNEL"
 	   mkdir /boot/$OUTDATED_KERNEL /boot/$OUTDATED_KERNEL/rootfsBoot/
-	   cp -f /media/boot/* /boot/$OUTDATED_KERNEL/
-	   cp -f /boot/* /boot/$OUTDATED_KERNEL/rootfsBoot/
+	   cp -f -R /media/boot/* /boot/$OUTDATED_KERNEL/
+	   cp -f -R /boot/* /boot/$OUTDATED_KERNEL/rootfsBoot/
 	fi
+	echo "Installing dependencies"
+	apt install -y git build-essential libqt4-dev libssl-dev gcc g++
+	apt-mark hold bootini linux-image*
 	cd ~
 	if [ ! -d linux ] ; then
-	   apt install -y git build-essential libqt4-dev libssl-dev gcc g++
-	   apt-mark hold bootini linux-image*
 	    git clone --depth 1 -b $GIT_BRANCH $GIT_SOURCE
+	    if [ $? -eq 0 ]
+	    then
+	      getConfig
+	    else
+	      echo "Could not clone. Is $GIT_SOURCE $GIT_BRANCH a valid repository?" >&2
+	    fi
 	else
+	   cd ~/linux
+	   echo "Updating repo"
 	   git pull origin $GIT_BRANCH
 	   git clean -f
-	fi
-	
-	if [ $? -eq 0 ]
-	then
-	  getConfig
-	else
-	  echo "Could not clone. Is $GIT_SOURCE $GIT_BRANCH a valid repository?" >&2
+	   getConfig
 	fi
 }
 
@@ -50,11 +54,15 @@ getConfig() {
 }
 
 compile() {
-	echo "Starting compilation"
+	echo "Cleaning up and preparing for compilation"
 	cd ~/linux
 	make clean
+	if [ "$CONFIGURE_CONFIG" = true ]
+	then
+	  make xconfig
+	fi
+	echo "Compiling"
 	make -j$(nproc)
-
 	installModules
 }
 
