@@ -3,8 +3,8 @@
 #parameters: repo link; branch; .config file
 
 OUTDATED_KERNEL=$(uname -r)
-GIT_SOURCE="${1:-https://github.com/euser101/linux/}"
-GIT_BRANCH="${2:-odroidxu4-4.14.y}"
+GIT_SOURCE=${1:-https://github.com/euser101/linux/}
+GIT_BRANCH=${2:-odroidxu4-4.14.y}
 KERNEL_CONFIG=${3:-~/xu4Scripts/files/kernel.config}
 CONFIGURE_CONFIG=false
 
@@ -59,7 +59,7 @@ compile() {
 	make clean
 	if [ "$CONFIGURE_CONFIG" = true ]
 	then
-	  make xconfig
+	  su odroid -c "make xconfig"
 	fi
 	echo "Compiling"
 	make -j$(nproc)
