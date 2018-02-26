@@ -5,3 +5,10 @@ Executes different Benchmarks to <strong>test the system and log</strong> the re
 <strong>Automatically compile</strong>, install and copy over a new <strong>Kernel</strong>.<br> 
 <br><br>
 <strong>Credits:</strong> The odroid-tweaks Script that fixed some issues go to [mdrjr](https://github.com/mdrjr/5422_platform). Fan control was added by me.
+
+<h1>Instructions</h1>
+Open Terminal and execute:
+<code>git clone https://github.com/euser101/xu4Scripts</code>
+<code>cd xu4Scripts</code>
+<code>chmod +x *.sh</code>
+<code>sudo ./scriptName.sh</code>
