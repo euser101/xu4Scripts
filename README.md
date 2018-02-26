@@ -8,7 +8,8 @@ Executes different Benchmarks to <strong>test the system and log</strong> the re
 
 <h1>Instructions</h1>
 Open Terminal and execute:
-<code>git clone https://github.com/euser101/xu4Scripts</code>
-<code>cd xu4Scripts</code>
-<code>chmod +x *.sh</code>
-<code>sudo ./scriptName.sh</code>
+<code>
+git clone https://github.com/euser101/xu4Scripts && cd xu4Scripts <br>
+chmod +x *.sh <br>
+sudo ./scriptName.sh <br>
+</code>
