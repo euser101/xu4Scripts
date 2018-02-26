@@ -1,47 +1,52 @@
 #!/bin/bash
 
-#parameters: repo link; .config file
+#parameters: repo link; branch; .config file
 
 OUTDATED_KERNEL=$(uname -r)
-GIT_SOURCE="https://github.com/euser101/linux/"
-# GIT_BRANCH="stable"
-GIT_BRANCH="odroidxu4-4.14.y"
+GIT_SOURCE="${1:-https://github.com/euser101/linux/}"
+GIT_BRANCH="${2:-odroidxu4-4.14.y}"
+KERNEL_CONFIG="${3:-~/xu4Scripts/files/kernel.config}"
 
 checkVersion() {
 	if [ ! -d /boot/$OUTDATED_KERNEL ] ; then
-	   echo "Backing up old kernel and ini files"
+	   echo "Backing up old kernel and ini files into /boot$OUTDATED_KERNEL"
 	   mkdir /boot/$OUTDATED_KERNEL /boot/$OUTDATED_KERNEL/rootfsBoot/
 	   cp -f /media/boot/* /boot/$OUTDATED_KERNEL/
 	   cp -f /boot/* /boot/$OUTDATED_KERNEL/rootfsBoot/
 	fi
 	cd ~
 	if [ ! -d linux ] ; then
-	   apt install -y git build-essential
+	   apt install -y git build-essential libqt4-dev libssl-dev gcc g++
 	   apt-mark hold bootini linux-image*
-	   if [ -z "$1" ]
-	   then
 	    git clone --depth 1 -b $GIT_BRANCH $GIT_SOURCE
-	   else
-	    git clone --depth 1 $1
-	   fi
 	else
 	   git pull origin $GIT_BRANCH
 	   git clean -f
 	fi
-
-	getConfig
+	
+	if [ $? -eq 0 ]
+	then
+	  getConfig
+	else
+	  echo "Could not clone. Is $GIT_SOURCE $GIT_BRANCH a valid repository?" >&2
+	fi
 }
 
 getConfig() {
-	if [ -z "$2" ] ; then
-	    echo "Copying xu4Scripts config"
-	    cp -f ~/xu4Scripts/files/kernel.config ~/linux/.config
+	echo "Copying config"
+	cp -f $KERNEL_CONFIG ~/linux/.config
+	if [ $? -eq 0 ]
+	then
+	  compile
 	else
-	    echo "Copying user defined config"
-	    cp -f $2 ~/linux/.config
+	  read -p "Copying config failed. Would you like to use the default Kernel config? " -n 1 -r
+	  if [[ $REPLY =~ ^[Yy]$ ]]
+	  then
+	    cd ~/linux && make odroidxu4_defconfig
+	  else
+	    echo "Was not able to copy config $KERNEL_CONFIG. Use defaults?" >&2
+	  fi
 	fi
-	
-	compile
 }
 
 compile() {
@@ -99,5 +104,5 @@ if [[ $EUID -ne 0 ]] ; then
   echo "You must be root" 2>&1
   exit 1
 else
-  installModules
+  checkVersion
 fi
