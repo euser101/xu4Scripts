@@ -7,8 +7,8 @@ prompt() {
 	if [[ $REPLY =~ ^[Yy]$ ]]
 	then
 	    $2
-	    echo
 	fi
+	echo
 }
 
 regenSSH() {
