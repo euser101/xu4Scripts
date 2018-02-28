@@ -7,6 +7,7 @@ prompt() {
 	if [[ $REPLY =~ ^[Yy]$ ]]
 	then
 	    $2
+	    echo
 	fi
 }
 
@@ -42,5 +43,5 @@ else
 fi
 
 prompt "Would you like to change the odroid user password?" "passwd odroid"
-prompt "Would you like to change the root password?" "su && passwd"
+prompt "Would you like to change the root password?" "sudo sudo passwd"
 cleanupSystem
