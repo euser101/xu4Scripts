@@ -3,7 +3,7 @@
 # Simple script to run at post boot to quickly and safely configure the System
 
 prompt() {
-  read -p $1 -n 1 -r
+  read -p "$1" -n 1 -r
 	if [[ $REPLY =~ ^[Yy]$ ]]
 	then
 	    $2
@@ -14,25 +14,33 @@ regenSSH() {
   echo "Regenerating SSH-Keys"
   sudo rm -v /etc/ssh/ssh_host_* && sudo dpkg-reconfigure openssh-server
   echo "Restarting SSH Service"
-  sudo service ssh restart
-  sudo systemctl status sshd
+  service ssh restart
+  systemctl status sshd
 }
 
 cleanupSystem() {
+  history -cw
   echo "Cleaning up system"
-  sudo apt autoremove
-  sudo apt clean
-  history -d
+  apt autoremove
+  apt clean
+  
+  prompt "Finished. Do you want to reboot now?" reboot
 }
 
 configureSSH() {
    echo "Note: SSH is now enabled on boot"
-   sudo systemctl enable ssh.service
+   systemctl enable ssh.service
    
    regenSSH
 }
 
-prompt "Do you want to enable SSH on boot?" configureSSH
+if [[ $EUID -ne 0 ]] ; then
+  echo "You must be root" 2>&1
+  exit 1
+else
+  prompt "Do you want to enable SSH on boot?" configureSSH
+fi
+
 prompt "Would you like to change the odroid user password?" "passwd odroid"
 prompt "Would you like to change the root password?" "su && passwd"
 cleanupSystem
